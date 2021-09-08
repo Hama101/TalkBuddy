@@ -6,7 +6,7 @@ const Sent = ({message}) => {
     return(
         <View style={styles.container}>
             <LinearGradient
-                colors={['#f26a50','#f20045']}
+                colors={['#010103', '#010103']}
                 style={styles.gradient}
             >
                 <Text style={styles.text}>{message}</Text>
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
         borderBottomLeftRadius:25,
     },
     text:{
-        color:'#fff',
+        color:'#e0e0dc',
         fontFamily:'Montserrat_700Bold'
     }
 })

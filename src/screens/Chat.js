@@ -24,14 +24,33 @@ const Chat = (props) => {
     const list = useRef(new Animated.ValueXY()).current;
 
     useEffect(function() {
-        const getData = async () => {
-            const resp = await fetch(URL);
-            const data = await resp.json();
-            setData(data);
+    const getData = async () => {
+            //const resp = await fetch(URL);
+            //const data = await resp.json();
+            setData([
+                {
+                    id : "0",
+                    name : "rick_bot",
+                    login:"Ricky",
+                    avatar_url : "https://www.pngitem.com/pimgs/m/43-438083_rick-et-morty-rick-fan-art-rick-icon.png",
+                },
+                {
+                    id : "1",
+                    name : "barney_bot",
+                    login:"Barney Stinson",
+                    avatar_url : "https://www.qualitylogoproducts.com/blog/wp-content/uploads/2012/03/barney-stinson-1.jpg",
+                },
+                {
+                    id : "2",
+                    name : "Harry_Bot",
+                    login:"Harry Potter",
+                    avatar_url : "https://static.wikia.nocookie.net/harrypotter/images/9/97/Harry_Potter.jpg",
+                },
+            ]);
+            console.log(data)
             setLoading(false);
         };
         getData();
-
         Animated.timing(pan, {
             toValue:{x:-400,y:0},
             delay:1000,
@@ -50,7 +69,7 @@ const Chat = (props) => {
 
     return(
        <LinearGradient
-        colors={['#f26a50', '#f20042', '#f20045']}
+        colors={['#210b11', '#8a0328', '#52031a']}
         style={styles.gradient}
        >
            <View style={styles.headerContainer}>
@@ -72,6 +91,7 @@ const Chat = (props) => {
                                     <Profiles
                                         key={item.id}
                                         username={item.login}
+                                        name = {item.name}
                                         uri={item.avatar_url}
                                     />
                                 ))
@@ -97,13 +117,15 @@ const Chat = (props) => {
                                             <Messages
                                                 key={item.id}
                                                 username={item.login}
+                                                name={item.name}
                                                 uri={item.avatar_url}
                                                 count={Math.floor(Math.random() * 3)}
                                                 onPress={()=>{
                                                     props.navigation.navigate('Discussion',{
                                                         itemId:item.id,
                                                         itemName:item.login,
-                                                        itemPic:item.avatar_url
+                                                        itemPic:item.avatar_url,
+                                                        name : item.name
                                                     });
                                                 }}
                                             />

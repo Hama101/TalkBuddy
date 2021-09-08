@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React,{useState , useEffect} from 'react';
 import {View,Text,Image,StyleSheet} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
@@ -6,30 +6,78 @@ import Icon from '@expo/vector-icons/AntDesign';
 import LastWatch from '../components/LastWatch';
 import Received from '../components/Received';
 import Sent from '../components/Sent';
-import Data from '../dummy/Data.json';
+//import Data from '../dummy/Data.json';
 import Input from '../components/Input'; 
+import {API_KEY , API_URL }from "./global"
+import axios from "axios"
 
 const Discussion = ({ route, navigation }) => {
-    const { itemName , itemPic } = route.params;
+    const [Data , setData] = useState([
+        {'sender':'Bot', 'message':"Try say hello"}
+    ])
+    let is_typing = false 
+    const { id , itemName , itemPic , name} = route.params;
+    const apiendpoint = API_URL+name
     const [inputMessage, setMessage] = useState('');
     
-    const send = () => {
-        Data.push({id:inputMessage,message:inputMessage});
-        setMessage('');
-    };
-
-    var txt = []
-    for (var i = 5; i < Data.length; i++){
-        txt.push(<Sent key={Data[i].id} message={Data[i].message}/>);
+    async function getResponce  (){
+        is_typing = true
+        console.log(is_typing);
+                //sending the api call
+                const payload = {
+                    inputs: {
+                        text: inputMessage
+                    }
+                };
+                const headers = {
+                    'Authorization': 'Bearer ' + API_KEY
+                };
+                
+                let botResponse = '';
+                console.log(apiendpoint)
+                const req = await axios(apiendpoint  ,
+                        {
+                            method: 'post',
+                            data: JSON.stringify(payload),
+                            headers: headers
+                        }
+                    ).then(function (req){
+                        if (req.data.hasOwnProperty('generated_text')) {
+                            return botResponse = req.data.generated_text
+                        }else {
+                            return botResponse = "I do not understand !"
+                        }
+                        }).catch(function(err){
+                            return botResponse = "I do not understand !"
+                        })
+                Data.push({'sender':'Bot', 'message':botResponse})
+                is_typing = false
     }
+    const send = async() => {
+        Data.push({'sender':'Me', 'message':inputMessage})
+        setData(Data)
+        setMessage('')
+        console.log(is_typing);
+        Promise.resolve(getResponce ()).then(function (){
+            console.table(Data)
+            if (!is_typing){
+                setData(Data)
+            }
+        })
+        
+    };
+    
+    var txt = []
+    
     console.log(Data)
+    console.log({ id , itemName , itemPic , name})
 
     return(
-      <LinearGradient
-        colors={["#f26a50","#f26a50", "#f20045"]}
+    <LinearGradient
+        colors={['#210b11', '#8a0328', '#52031a']}
         style={styles.container}
-      >
-          <View style={styles.main}>
+    >
+        <View style={styles.main}>
                 <View style={styles.headerContainer}>
                     <TouchableOpacity
                         onPress={()=>navigation.goBack()}
@@ -41,36 +89,41 @@ const Discussion = ({ route, navigation }) => {
                 </View>
                 <ScrollView showsVerticalScrollIndicator={false}>
                     <LastWatch  checkedOn='Yesterday'/>
-                    <Received 
-                        image={itemPic}
-                        message={Data[0].message}
-                    />
-                    <Sent
-                        message={Data[1].message}
-                    />
-                    <Received 
-                        image={itemPic}
-                        message={Data[2].message}
-                    />
-                     <Sent
-                        message={Data[3].message}
-                    />
-                    <LastWatch  checkedOn='Today'/>
-                    <Received 
-                        image={itemPic}
-                        message={Data[4].message}
-                    />
+                    {
+                        Data.length === 0 ? 
+                        (<Text></Text>)
+                        :
+                        (
+                            Data.map(
+                                (message) =>{
+                                    return (
+                                        message.sender =="Me" ? 
+                                        (<Sent
+                                            message = {message.message}
+                                        />)
+                                        :
+                                        (
+                                        <Received
+                                            message = {message.message}
+                                            image = {itemPic}
+                                        />
+                                        )
+                                    )
+                                }
+                            )
+                        )
+                    }
                     <View>
                         {txt}
                     </View>
                 </ScrollView>
-          </View>
-          <Input
+        </View>
+        <Input
             inputMessage={inputMessage}
             setMessage={(inputMessage)=> setMessage(inputMessage)}
             onSendPress={send}
-          />
-      </LinearGradient>
+        />
+    </LinearGradient>
     )
 }
 export default Discussion;

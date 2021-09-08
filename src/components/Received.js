@@ -1,15 +1,20 @@
 import React from 'react';
 import {View,Text,StyleSheet,Image} from 'react-native';
-
+import { LinearGradient } from 'expo-linear-gradient';
 
 const Received = ({image, message}) => {
     return(
         <View style={styles.container}>
           <Image source={{uri:image}} style={styles.img}/>
           <View>
+          <LinearGradient
+                colors={['#210b11', '#8a0328']}
+                style={styles.gradient}
+            >
                <Text style={styles.message}>{message}</Text>
-               <Text style={styles.duration}>12:13 AM</Text>
-          </View>
+            </LinearGradient>
+            <Text style={styles.duration}>12:13 AM</Text>
+        </View>
         </View>
     )
 }
@@ -35,6 +40,17 @@ const styles = StyleSheet.create({
     message:{
         fontSize:13,
         marginHorizontal:15,
-        fontFamily:'Montserrat_700Bold'
-    }
+        fontFamily:'Montserrat_700Bold',
+        color:'#e0e0dc',
+    },
+    gradient:{
+        maxWidth:220,
+        alignItems:'center',
+        justifyContent:'center',
+        paddingHorizontal:20,
+        paddingVertical:10,
+        borderTopLeftRadius:25,
+        borderTopRightRadius:25,
+        borderBottomLeftRadius:25,
+    },
 })

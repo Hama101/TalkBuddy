@@ -20,7 +20,7 @@ const Input = ({ inputMessage, onSendPress, setMessage }) => {
                 style={styles.input}
             />
             <TouchableOpacity onPress={onSendPress}>
-                <Ionicons name='ios-send' color='#FFF' size={20}/>
+                <Ionicons name='ios-send' color='#FFF' size={30}/>
             </TouchableOpacity>
         </View>
     )
